@@ -121,21 +121,54 @@ select participant_country_nm, participant_id,
            as count_people_over_country
 from participant;
 
+select participant_country_nm, participant_id,
+       sum(participant_id) over
+           (order by participant_country_nm rows current row )
+           as count_people_over_country
+from participant;
 
 select participant_country_nm, participant_id,
-       count(participant_id) over
-           (partition by participant_country_nm rows between current row and 3 following exclude current row)
+       sum(participant_id) over
+           (partition by participant_country_nm order by participant_country_nm rows between unbounded preceding and current row )
+           as count_people_over_country
+from participant;
+
+select participant_country_nm, participant_id,
+       sum(participant_id) over
+           (order by participant_country_nm range current row )
+           as count_people_over_country
+from participant;
+
+select participant_country_nm, participant_id,
+       sum(participant_id) over
+           (order by participant_country_nm range between current row  and unbounded following )
+           as count_people_over_country
+from participant;
+
+
+
+select participant_country_nm, participant_id, participant_birth_dt,
+       sum(participant_id) over
+           (partition by participant_country_nm order by participant_birth_dt range between current row  and '100 days' following)
+           as count_people_over_country
+from participant;
+
+
+
+select participant_country_nm, participant_id,
+       sum(participant_id) over
+           (partition by participant_country_nm range between current row and unbounded following)
            as people_over_country
 from participant;
 
 
---example with groups (must be group by!!!)
 select participant_country_nm, participant_id,
-       count(participant_id) over
+       sum(participant_id) over
            (partition by participant_country_nm order by participant_id groups between current row and 1 following)
            as people_over_country
-from participant
-group by participant_country_nm, participant_id;
+from participant;
+
+
 
 
 --window functions (ranking type)
